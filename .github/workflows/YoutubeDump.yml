@@ -17,7 +17,7 @@ jobs:
       run: |
         sudo wget https://yt-dl.org/downloads/latest/youtube-dl --no-check-certificate -O /usr/local/bin/youtube-dl
         sudo chmod a+rx /usr/local/bin/youtube-dl
-        sudo apt install -y ffmpeg
+        sudo apt install -y ffmpeg zip
         sudo timedatectl set-timezone "$TZ"
 
     - name: download videos
@@ -30,13 +30,13 @@ jobs:
     - name: organize files
       if: success() && !cancelled()
       run: |
-        tar -cvf videos-"$(date '+%F')".tar videos/*
+        zip -s 1900m -9 videos-"$(date '+%F')".zip videos/*
 
-    - name: Upload firmware to WssTransfer
-      id: wsstransfer
+    - name: Upload firmware to WeTransfer
+      id: wetransfer
       if: success() && !cancelled()
       run: |
         curl -fsSL git.io/file-transfer | sh
-        ./transfer wss --block 2621440 -s -p 16 --no-progress videos-"$(date '+%F')".tar 2>&1 | tee wsstransfer.log
-        echo "::warning file=wsstransfer.com::$(cat wsstransfer.log | grep https)"
-        echo "::set-output name=url::$(cat wsstransfer.log | grep https | cut -f3 -d" ")"
+        ./transfer wet -s -p 16 --no-progress videos-"$(date '+%F')".* 2>&1 | tee wetransfer.log
+        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
