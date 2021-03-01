@@ -32,11 +32,11 @@ jobs:
       run: |
         tar -cvf videos-"$(date '+%F')".tar videos/*
 
-    - name: Upload firmware to CowTransfer
-      id: cowtransfer
+    - name: Upload firmware to WssTransfer
+      id: wsstransfer
       if: success() && !cancelled()
       run: |
         curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --block 2621440 -s -p 16 --no-progress videos-"$(date '+%F')".tar 2>&1 | tee cowtransfer.log
-        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+        ./transfer wss --block 2621440 -s -p 16 --no-progress videos-"$(date '+%F')".tar 2>&1 | tee wsstransfer.log
+        echo "::warning file=wsstransfer.com::$(cat wsstransfer.log | grep https)"
+        echo "::set-output name=url::$(cat wsstransfer.log | grep https | cut -f3 -d" ")"
